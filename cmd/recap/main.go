@@ -1,7 +1,8 @@
 // Command recap reads text from stdin and writes an LLM-generated
 // summary to stdout. The endpoint and model are resolved from flags,
 // environment, or autodiscovered via Ollama. Results are cached on
-// disk; cached variants are picked at random.
+// disk; cached variants are picked at random. Use -A to dump every
+// cached summary for the current input as one markdown document.
 package main
 
 import (
@@ -29,6 +30,7 @@ func main() {
 		info     = flag.Bool("i", false, "Show resolved endpoint, model, styles, and cache dir; then exit")
 		verbose  = flag.Bool("v", false, "Verbose: print resolved config, cache state, and timing to stderr")
 		force    = flag.Bool("f", false, "Force a new summary; bypass cache read but still record the result")
+		all      = flag.Bool("A", false, "Render all cached summaries for the input on stdin as one markdown doc")
 		timeout  = flag.Duration("t", 5*time.Minute, "Request timeout")
 	)
 	flag.Parse()
@@ -60,11 +62,6 @@ func main() {
 		return
 	}
 
-	if *verbose {
-		fmt.Fprintf(os.Stderr, "endpoint: %s\nmodel:    %s\nstyle:    %s\n",
-			cfg.Endpoint, cfg.Model, *style)
-	}
-
 	text, err := io.ReadAll(os.Stdin)
 	if err != nil {
 		die("read stdin: %v", err)
@@ -73,31 +70,48 @@ func main() {
 		die("no input on stdin")
 	}
 
+	inputKey := cache.InputKey(string(text))
+
+	if *all {
+		entries, err := cc.All(inputKey)
+		if err != nil {
+			die("cache: %v", err)
+		}
+		if len(entries) == 0 {
+			die("no cached summaries for this input (key %s)", inputKey[:12])
+		}
+		renderAll(os.Stdout, cc.Dir(inputKey), inputKey, entries)
+		return
+	}
+
+	if *verbose {
+		fmt.Fprintf(os.Stderr, "endpoint: %s\nmodel:    %s\nstyle:    %s\ninput:    %s\n",
+			cfg.Endpoint, cfg.Model, *style, inputKey[:12])
+	}
+
 	rendered, err := prompts.Render(*style, prompts.Data{Text: string(text)})
 	if err != nil {
 		die("%v", err)
 	}
 
-	key := cache.Key(cfg.Endpoint, cfg.Model, rendered)
-
 	if !*force {
-		if hit, ok, err := cc.Get(key); err != nil {
+		variants, err := cc.Variants(inputKey, cfg.Model, *style)
+		if err != nil {
 			if *verbose {
 				fmt.Fprintf(os.Stderr, "cache: read failed: %v\n", err)
 			}
-		} else if ok {
+		} else if len(variants) > 0 {
 			if *verbose {
-				names, _ := cc.List(key)
-				fmt.Fprintf(os.Stderr, "cache: hit (1 of %d variants)\n", len(names))
+				fmt.Fprintf(os.Stderr, "cache: hit (1 of %d variants)\n", len(variants))
 			}
-			fmt.Println(hit)
+			fmt.Println(strings.TrimRight(cache.PickRandom(variants).Body, "\n"))
 			return
 		} else if *verbose {
 			fmt.Fprintln(os.Stderr, "cache: miss")
 		}
 	} else if *verbose {
-		names, _ := cc.List(key)
-		fmt.Fprintf(os.Stderr, "cache: forced (%d existing variants)\n", len(names))
+		existing, _ := cc.Variants(inputKey, cfg.Model, *style)
+		fmt.Fprintf(os.Stderr, "cache: forced (%d existing variants for this model+style)\n", len(existing))
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), *timeout)
@@ -109,16 +123,66 @@ func main() {
 	if err != nil {
 		die("%v", err)
 	}
+	elapsed := time.Since(start)
+	body := strings.TrimRight(out, "\n")
 
-	if err := cc.Put(key, out); err != nil && *verbose {
+	entry := cache.Entry{
+		Model:       cfg.Model,
+		Endpoint:    cfg.Endpoint,
+		Style:       *style,
+		Created:     time.Now().UTC(),
+		Elapsed:     elapsed,
+		InputBytes:  len(text),
+		OutputBytes: len(body),
+		Body:        body,
+	}
+	path, err := cc.Put(inputKey, entry)
+	if err != nil && *verbose {
 		fmt.Fprintf(os.Stderr, "cache: write failed: %v\n", err)
+	} else if *verbose {
+		fmt.Fprintf(os.Stderr, "cache: wrote %s\n", path)
 	}
 
 	if *verbose {
 		fmt.Fprintf(os.Stderr, "took %s (%d bytes in, %d bytes out)\n",
-			time.Since(start).Round(time.Millisecond), len(text), len(out))
+			elapsed.Round(time.Millisecond), len(text), len(body))
 	}
-	fmt.Println(out)
+	fmt.Println(body)
+}
+
+func renderAll(w io.Writer, dir, inputKey string, entries []cache.Entry) {
+	fmt.Fprintf(w, "# recap: %d variant(s) for input `%s`\n\n", len(entries), inputKey[:12])
+	fmt.Fprintf(w, "_directory: `%s`_\n\n", dir)
+	for i, e := range entries {
+		title := e.Model
+		if e.Style != "" {
+			title += " — " + e.Style
+		}
+		if title == "" {
+			title = "(unknown)"
+		}
+		fmt.Fprintf(w, "## %d. %s\n\n", i+1, title)
+		var meta []string
+		if !e.Created.IsZero() {
+			meta = append(meta, "created: "+e.Created.UTC().Format(time.RFC3339))
+		}
+		if e.Endpoint != "" {
+			meta = append(meta, "endpoint: `"+e.Endpoint+"`")
+		}
+		if e.Elapsed > 0 {
+			meta = append(meta, "elapsed: "+e.Elapsed.Round(time.Millisecond).String())
+		}
+		if e.OutputBytes > 0 {
+			meta = append(meta, fmt.Sprintf("%d bytes", e.OutputBytes))
+		}
+		if len(meta) > 0 {
+			fmt.Fprintf(w, "_%s_\n\n", strings.Join(meta, " · "))
+		}
+		fmt.Fprintln(w, strings.TrimRight(e.Body, "\n"))
+		if i < len(entries)-1 {
+			fmt.Fprintln(w, "\n---")
+		}
+	}
 }
 
 func die(format string, args ...any) {
