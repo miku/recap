@@ -1,0 +1,39 @@
+name: recap
+arch: ${GOARCH}
+platform: linux
+version: ${SEMVER}
+version_schema: semver
+epoch: 0
+release: 0
+section: utils
+priority: optional
+maintainer: Martin Czygan <martin.czygan@gmail.com>
+description: |
+  Summarize text from stdin via an OpenAI-compatible LLM.
+  Supports multiple input-type prompt styles (article, transcript,
+  podcast, paper), on-disk caching of variants, and side-by-side
+  comparison of summaries across models and styles.
+homepage: https://github.com/miku/recap
+license: MIT
+disable_globbing: false
+
+contents:
+  # Binary
+  - src: recap
+    dst: /usr/local/bin/recap
+    file_info:
+      mode: 0755
+
+  # Man page
+  - src: docs/recap.1
+    dst: /usr/local/share/man/man1/recap.1
+    file_info:
+      mode: 0644
+
+umask: 0o002
+
+deb:
+  compression: zstd
+
+rpm:
+  compression: zstd

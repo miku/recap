@@ -7,6 +7,8 @@ you other tools like
 [kreuzberg](https://github.com/kreuzberg-dev/kreuzberg),
 [typeout](https://github.com/miku/typeout), ...
 
+[![](static/cotton_compr_24118_sm.gif)](https://etc.usf.edu/clipart/24100/24118/cotton_compr_24118.htm)
+
 ## Installation
 
 ```

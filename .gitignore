@@ -32,3 +32,5 @@ go.work.sum
 # .vscode/
 
 /recap
+*.deb
+*.rpm
