@@ -1,7 +1,11 @@
 # recap
 
 Recap and summarize textual material. Pipe text in, get a structured summary
-out.
+out. This tool will only do the summarization. For turning your file into text
+you other tools like
+[pdftotext](https://www.xpdfreader.com/pdftotext-man.html),
+[kreuzberg](https://github.com/kreuzberg-dev/kreuzberg),
+[typeout](https://github.com/miku/typeout), ...
 
 ## Usage examples
 
@@ -26,5 +30,4 @@ $ recap -A < input.txt | glow -p -
 # Use a specific model on a remote endpoint
 $ recap -e https://api.example.com/v1 -k "$TOKEN" -m gpt-4o < article.txt
 ```
-
 
