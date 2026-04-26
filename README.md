@@ -73,7 +73,9 @@ $ recap -e https://api.example.com/v1 -k "$TOKEN" -m gpt-4o < article.txt
 
 ![](static/recap-6480361.gif)
 
-## Impressions
+## More Impressions
+
+Using various tools to turn files into plain text.
 
 ![](static/termshot-2025.loreslm-1.13.png)
 
