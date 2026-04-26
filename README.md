@@ -13,6 +13,24 @@ you other tools like
 $ go install github.com/miku/recap/cmd/recap@latest
 ```
 
+## LLM selection
+
+If not explicit LLM endpoint and model is given, **recap** will try to discover
+a suitable endpoint and model by looking for typical environment variables,
+like `OPENAI_BASE_URL` or `OLLAMA_HOST`, but you can also set endpoint `-e`
+and model `-m` explicitly.
+
+To show the discovered endpoint and model:
+
+```
+$ recap -i
+endpoint: http://chiba:11434/v1
+model:    nemotron-3-nano:30b-a3b-fp16
+styles:   article, basic, paper, podcast, transcript
+cache:    /home/tir/.cache/recap
+
+```
+
 ## You PDF, YouTube videos and any other text as input
 
 ```
