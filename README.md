@@ -1,6 +1,6 @@
 # recap
 
-Recap and summarize textual material. Pipe text in, get a structured summary
+**Recap and summarize textual material**. Pipe text in, get a structured summary
 out. This tool will only do the summarization. For turning your file into text
 you other tools like
 [pdftotext](https://www.xpdfreader.com/pdftotext-man.html),
