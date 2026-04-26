@@ -13,6 +13,18 @@ you other tools like
 $ go install github.com/miku/recap/cmd/recap@latest
 ```
 
+## You PDF, YouTube videos and any other text as input
+
+```
+$ kreuzberg extract testdata/2025.loreslm-1.13.pdf | \
+    recap -s article -m qwen3.6:latest | glow
+
+$ typeout https://www.youtube.com/watch?v=S4EsRyZQKEc | \
+    recap -s transcript -m qwen3.6:latest | glow
+```
+
+See some example rendering/screenshot below.
+
 ## Usage examples
 
 ```shell
@@ -38,3 +50,9 @@ $ recap -e https://api.example.com/v1 -k "$TOKEN" -m gpt-4o < article.txt
 ```
 
 ![](static/recap-6480361.gif)
+
+## Impressions
+
+![](static/termshot-2025.loreslm-1.13.png)
+
+![](static/termshot-S4EsRyZQKEc.png)
