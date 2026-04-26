@@ -19,7 +19,7 @@ Or packaged as [deb or rpm](https://github.com/miku/recap/releases).
 
 ## LLM selection
 
-If no explicit LLM endpoint and model are given, **recap** will try to discover
+If no explicit LLM endpoint and model are given, **recap** will try to [discover](https://github.com/miku/recap/blob/217e746f58385f5ecce5c6e54f4abc0f7e1eef20/internal/discover/discover.go#L31-L37)
 a suitable endpoint and model by looking for typical environment variables,
 like `OPENAI_BASE_URL` or `OLLAMA_HOST`, but you can also set endpoint `-e`
 and model `-m` explicitly.
