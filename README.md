@@ -35,7 +35,7 @@ cache:    /home/tir/.cache/recap
 
 ```
 
-## Your PDF, YouTube videos and any other text as input
+## Your PDF, YouTube video transcriptions and any other text as input
 
 ```
 $ kreuzberg extract testdata/2025.loreslm-1.13.pdf | \
