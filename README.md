@@ -2,7 +2,7 @@
 
 **Recap and summarize textual material**. Pipe text in, get a structured summary
 out. This tool will only do the summarization. For turning your file into text
-you other tools like
+use other tools like
 [pdftotext](https://www.xpdfreader.com/pdftotext-man.html),
 [kreuzberg](https://github.com/kreuzberg-dev/kreuzberg),
 [typeout](https://github.com/miku/typeout), ...
@@ -19,7 +19,7 @@ Or packaged as [deb or rpm](https://github.com/miku/recap/releases).
 
 ## LLM selection
 
-If not explicit LLM endpoint and model is given, **recap** will try to discover
+If no explicit LLM endpoint and model are given, **recap** will try to discover
 a suitable endpoint and model by looking for typical environment variables,
 like `OPENAI_BASE_URL` or `OLLAMA_HOST`, but you can also set endpoint `-e`
 and model `-m` explicitly.
@@ -35,7 +35,7 @@ cache:    /home/tir/.cache/recap
 
 ```
 
-## You PDF, YouTube videos and any other text as input
+## Your PDF, YouTube videos and any other text as input
 
 ```
 $ kreuzberg extract testdata/2025.loreslm-1.13.pdf | \
