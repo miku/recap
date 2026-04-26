@@ -1,0 +1,124 @@
+.TH RECAP 1                          2026\-04\-26                           0.1.0
+.SH NAME
+.PP
+recap \- summarize text from stdin via an OpenAI\-compatible LLM
+.SH SYNOPSIS
+.PP
+\fB\fCrecap\fR [\fIOPTIONS\fP]
+.SH DESCRIPTION
+.PP
+\fB\fCrecap\fR reads text from standard input and writes an LLM\-generated
+summary to standard output. It targets any OpenAI\-compatible chat
+completions endpoint, with optional autodiscovery of a local Ollama
+installation.
+.PP
+Several summarization styles are bundled — for articles, lecture or
+video transcripts, podcast conversations, and academic papers — and
+new ones can be added by dropping markdown templates into the prompt
+directory at build time.
+.PP
+Summaries are cached on disk under \fB\fC$XDG_CACHE_HOME/recap\fR\&. Because
+LLMs are probabilistic, multiple variants for the same input may
+coexist in the cache; on a hit, one is picked at random. The \fB\fC\-A\fR
+flag concatenates every cached variant for an input as a single
+markdown document so the outputs of different models and styles can
+be compared with a renderer of choice.
+.SH OPTIONS
+.TP
+\fB\fC\-e\fR \fIURL\fP
+OpenAI\-compatible base URL. Autodiscovered if empty.
+.TP
+\fB\fC\-k\fR \fIKEY\fP
+API key. Defaults to the value of \fB\fCOPENAI_API_KEY\fR\&.
+.TP
+\fB\fC\-m\fR \fIMODEL\fP
+Model name. Autodiscovered if empty.
+.TP
+\fB\fC\-s\fR \fISTYLE\fP
+Summarization style. Run with \fB\fC\-l\fR for the list. Default: \fB\fCbasic\fR\&.
+.TP
+\fB\fC\-l\fR
+List available styles and exit.
+.TP
+\fB\fC\-i\fR
+Show the resolved endpoint, model, styles, and cache directory;
+do not call the LLM.
+.TP
+\fB\fC\-v\fR
+Verbose. Print resolved configuration, cache state, and timing to
+standard error.
+.TP
+\fB\fC\-f\fR
+Force a new summary. Skip the cache read but still record the
+result, growing the variant pool for this input.
+.TP
+\fB\fC\-A\fR
+Render every cached variant for the input on stdin as a single
+concatenated markdown document.
+.TP
+\fB\fC\-t\fR \fIDURATION\fP
+Request timeout (default 5m).
+.SH ENVIRONMENT
+.TP
+\fB\fCOPENAI_BASE_URL\fR, \fB\fCOPENAI_API_KEY\fR, \fB\fCOPENAI_MODEL\fR
+Used when the corresponding flag is unset.
+.TP
+\fB\fCOLLAMA_HOST\fR
+Endpoint used for model autodiscovery when no other configuration
+is available. Defaults to \fB\fChttp://localhost:11434\fR\&.
+.SH FILES
+.TP
+\fB\fC$XDG_CACHE_HOME/recap/\fR
+Cache root. Each input has its own subdirectory whose name is the
+SHA\-256 of the input text. Files within are named
+\fB\fC<modelslug>__<style>__<bodyhash>.md\fR and contain YAML front
+matter followed by the response body.
+.SH EXAMPLES
+.PP
+Default summary using the autodiscovered model:
+.PP
+.RS
+.nf
+cat article.md | recap
+.fi
+.RE
+.PP
+Pick a style tailored to the input type:
+.PP
+.RS
+.nf
+recap \-s transcript < lecture.vtt
+recap \-s podcast    < interview.txt
+recap \-s paper      < paper.txt
+.fi
+.RE
+.PP
+Force a fresh variant (the cache grows over repeated runs):
+.PP
+.RS
+.nf
+recap \-f < input.txt
+.fi
+.RE
+.PP
+Render every cached variant as one markdown document:
+.PP
+.RS
+.nf
+recap \-A < input.txt | glow \-
+.fi
+.RE
+.PP
+Use a specific model on a remote endpoint:
+.PP
+.RS
+.nf
+recap \-e https://api.example.com/v1 \-k "$TOKEN" \-m gpt\-4o < article.txt
+.fi
+.RE
+.SH AUTHOR
+.PP
+Martin Czygan \[la]martin.czygan@gmail.com\[ra]
+.SH SEE ALSO
+.PP
+\fB\fCglow(1)\fR, \fB\fCollama(1)\fR
