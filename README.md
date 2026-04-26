@@ -15,6 +15,8 @@ you other tools like
 $ go install github.com/miku/recap/cmd/recap@latest
 ```
 
+Or packaged as [deb or rpm](https://github.com/miku/recap/releases).
+
 ## LLM selection
 
 If not explicit LLM endpoint and model is given, **recap** will try to discover
