@@ -7,6 +7,12 @@ you other tools like
 [kreuzberg](https://github.com/kreuzberg-dev/kreuzberg),
 [typeout](https://github.com/miku/typeout), ...
 
+## Installation
+
+```
+$ go install github.com/miku/recap/cmd/recap@latest
+```
+
 ## Usage examples
 
 ```shell
