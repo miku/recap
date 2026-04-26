@@ -37,3 +37,4 @@ $ recap -A < input.txt | glow -p -
 $ recap -e https://api.example.com/v1 -k "$TOKEN" -m gpt-4o < article.txt
 ```
 
+![](static/recap-6480361.gif)
