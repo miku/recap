@@ -33,6 +33,7 @@ func main() {
 		all      = flag.Bool("A", false, "Render all cached summaries for the input on stdin as one markdown doc")
 		timeout  = flag.Duration("t", 5*time.Minute, "Request timeout")
 	)
+	flag.Usage = usage
 	flag.Parse()
 
 	if *list {
@@ -188,4 +189,41 @@ func renderAll(w io.Writer, dir, inputKey string, entries []cache.Entry) {
 func die(format string, args ...any) {
 	fmt.Fprintf(os.Stderr, "recap: "+format+"\n", args...)
 	os.Exit(1)
+}
+
+func usage() {
+	out := flag.CommandLine.Output()
+	fmt.Fprintln(out, `recap — summarize text from stdin via an OpenAI-compatible LLM.
+
+Usage:
+  recap [flags] < input.txt
+
+The endpoint and model are resolved from flags, then environment
+(OPENAI_BASE_URL, OPENAI_API_KEY, OPENAI_MODEL), then Ollama
+autodiscovery via $OLLAMA_HOST (default http://localhost:11434),
+preferring the most recently modified non-embedding model.
+
+Flags:`)
+	flag.PrintDefaults()
+	fmt.Fprintln(out, `
+Examples:
+  # Default summary using the autodiscovered model
+  cat article.md | recap
+
+  # Pick a style tailored to the input type
+  recap -s transcript < lecture.vtt
+  recap -s podcast    < interview.txt
+  recap -s paper      < paper.txt
+
+  # Show resolved endpoint, model, styles, cache dir (no LLM call)
+  recap -i
+
+  # Force a fresh variant (LLMs are probabilistic; -f grows the cache)
+  recap -f < input.txt
+
+  # Render every cached variant for an input as one markdown document
+  recap -A < input.txt | glow -
+
+  # Use a specific model on a remote endpoint
+  recap -e https://api.example.com/v1 -k "$TOKEN" -m gpt-4o < article.txt`)
 }
