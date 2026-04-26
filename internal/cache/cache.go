@@ -72,19 +72,24 @@ func (c *Cache) Dir(inputKey string) string {
 }
 
 // Slug normalizes a string for use as a filename component. Anything
-// outside [A-Za-z0-9.-] becomes '-' so model names like "llama3.2:latest"
-// map cleanly to "llama3.2-latest".
+// outside [A-Za-z0-9.-] becomes '-', and runs of '-' are collapsed,
+// so "llama3.2:latest" → "llama3.2-latest" and "x///y" → "x-y".
 func Slug(s string) string {
 	var b strings.Builder
+	prevDash := false
 	for _, r := range s {
-		switch {
-		case r >= 'a' && r <= 'z',
-			r >= 'A' && r <= 'Z',
-			r >= '0' && r <= '9',
-			r == '.', r == '-':
+		ok := (r >= 'a' && r <= 'z') ||
+			(r >= 'A' && r <= 'Z') ||
+			(r >= '0' && r <= '9') ||
+			r == '.' || r == '-'
+		if ok {
 			b.WriteRune(r)
-		default:
+			prevDash = r == '-'
+			continue
+		}
+		if !prevDash {
 			b.WriteByte('-')
+			prevDash = true
 		}
 	}
 	return strings.Trim(b.String(), "-")
@@ -206,7 +211,7 @@ func parseEntry(s string) Entry {
 		return e
 	}
 	head := rest[:end]
-	e.Body = strings.TrimLeft(rest[end+5:], "\n")
+	e.Body = strings.TrimRight(strings.TrimLeft(rest[end+5:], "\n"), "\n")
 	for _, line := range strings.Split(head, "\n") {
 		line = strings.TrimSpace(line)
 		if line == "" {
