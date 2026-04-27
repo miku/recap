@@ -16,4 +16,7 @@ Cover:
 Use precise language. When the paper relies on jargon that is not
 self-explanatory, define it briefly the first time it appears.
 
+Output guidelines:
+- Do not use emojis in your response.
+
 {{ .Text }}

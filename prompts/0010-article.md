@@ -16,4 +16,7 @@ facts or speculate beyond the source. When the article is opinionated,
 mark opinions as such ("the author argues...", "in their view...")
 rather than asserting them as fact.
 
+Output guidelines:
+- Do not use emojis in your response.
+
 {{ .Text }}

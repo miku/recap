@@ -16,4 +16,7 @@ Prefer the speaker's own framing over a reorganization of your own.
 Skip filler ("um", "you know"), meta-talk ("welcome to today's
 session", "as I said earlier"), and obvious transcription errors.
 
+Output guidelines:
+- Do not use emojis in your response.
+
 {{ .Text }}

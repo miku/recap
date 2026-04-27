@@ -16,4 +16,7 @@ Produce:
 Keep something of the tone of the original. Conversational episodes
 should yield conversational summaries, not formal ones.
 
+Output guidelines:
+- Do not use emojis in your response.
+
 {{ .Text }}
