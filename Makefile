@@ -13,9 +13,9 @@ all: $(TARGETS)
 test:
 	go test -v ./...
 
-docs/recap.1: docs/recap.md
+docs/recap.1: docs/recap.md Makefile
 	@if command -v md2man-roff >/dev/null 2>&1; then \
-		md2man-roff docs/recap.md > docs/recap.1; \
+		sed -e 's/{{DATE}}/'"$$(date +%F)"'/' -e 's/{{VERSION}}/$(SEMVER)/' docs/recap.md | md2man-roff > docs/recap.1; \
 	else \
 		echo "md2man-roff not installed, skipping man page generation"; \
 	fi

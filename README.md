@@ -30,7 +30,7 @@ To show the discovered endpoint and model:
 $ recap -i
 endpoint: http://chiba:11434/v1
 model:    nemotron-3-nano:30b-a3b-fp16
-styles:   article, basic, paper, podcast, transcript
+styles:   article, basic, paper, paperplus, podcast, transcript
 cache:    /home/tir/.cache/recap
 
 ```
@@ -57,6 +57,9 @@ $ cat article.md | recap
 $ recap -s transcript < lecture.vtt
 $ recap -s podcast    < interview.txt
 $ recap -s paper      < paper.txt
+
+# Like paper, but weaves in short verbatim quotes from the source
+$ recap -s paperplus  < paper.txt
 
 # Show resolved endpoint, model, styles, cache dir (no LLM call)
 $ recap -i

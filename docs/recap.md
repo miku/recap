@@ -1,4 +1,4 @@
-# RECAP 1                          2026-04-26                           0.1.0
+# RECAP 1 {{DATE}} {{VERSION}}
 
 ## NAME
 
@@ -16,9 +16,10 @@ completions endpoint, with optional autodiscovery of a local Ollama
 installation.
 
 Several summarization styles are bundled — for articles, lecture or
-video transcripts, podcast conversations, and academic papers — and
-new ones can be added by dropping markdown templates into the prompt
-directory at build time.
+video transcripts, podcast conversations, and academic papers, plus a
+paper variant that weaves short verbatim quotes from the source into
+the summary — and new ones can be added by dropping markdown templates
+into the prompt directory at build time.
 
 Summaries are cached on disk under `$XDG_CACHE_HOME/recap`. Because
 LLMs are probabilistic, multiple variants for the same input may
@@ -91,6 +92,7 @@ Pick a style tailored to the input type:
     recap -s transcript < lecture.vtt
     recap -s podcast    < interview.txt
     recap -s paper      < paper.txt
+    recap -s paperplus  < paper.txt
 
 Force a fresh variant (the cache grows over repeated runs):
 
