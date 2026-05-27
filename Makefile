@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 TARGETS := recap docs/recap.1
-VERSION := 0.1.1
+VERSION := 0.1.2
 SEMVER := $(shell echo $(VERSION) | sed 's/^v//')
 
 .PHONY: all
