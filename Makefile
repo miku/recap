@@ -32,6 +32,5 @@ rpm: $(TARGETS) docs/recap.1
 .PHONY: clean
 clean:
 	rm -f $(TARGETS)
-	rm -f $(TARGETS)_*.deb $(TARGETS)-*.rpm
-	rm -f docs/recap.1
+	rm -f recap_*.deb recap-*.rpm
 
