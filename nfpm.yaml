@@ -1,4 +1,4 @@
-name: recap
+name: chibi
 arch: ${GOARCH}
 platform: linux
 version: ${SEMVER}
@@ -13,20 +13,20 @@ description: |
   Supports multiple input-type prompt styles (article, transcript,
   podcast, paper), on-disk caching of variants, and side-by-side
   comparison of summaries across models and styles.
-homepage: https://github.com/miku/recap
+homepage: https://github.com/miku/chibi
 license: MIT
 disable_globbing: false
 
 contents:
   # Binary
-  - src: recap
-    dst: /usr/local/bin/recap
+  - src: chibi
+    dst: /usr/local/bin/chibi
     file_info:
       mode: 0755
 
   # Man page
-  - src: docs/recap.1
-    dst: /usr/local/share/man/man1/recap.1
+  - src: docs/chibi.1
+    dst: /usr/local/share/man/man1/chibi.1
     file_info:
       mode: 0644
 

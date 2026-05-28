@@ -6,7 +6,7 @@
 // human-readable slugs so that pointing a markdown renderer such as
 // glow at the directory works directly:
 //
-//	glow -p ~/.cache/recap/<input-hash>
+//	glow -p ~/.cache/chibi/<input-hash>
 //
 // On-disk format per file is YAML-style front matter (model, endpoint,
 // style, timestamp, elapsed, sizes) followed by the response body.
@@ -46,14 +46,14 @@ type Entry struct {
 }
 
 // New returns a cache rooted at root. If root is empty, the platform
-// user-cache directory is used (e.g. $XDG_CACHE_HOME/recap on Linux).
+// user-cache directory is used (e.g. $XDG_CACHE_HOME/chibi on Linux).
 func New(root string) (*Cache, error) {
 	if root == "" {
 		base, err := os.UserCacheDir()
 		if err != nil {
 			return nil, err
 		}
-		root = filepath.Join(base, "recap")
+		root = filepath.Join(base, "chibi")
 	}
 	return &Cache{root: root}, nil
 }

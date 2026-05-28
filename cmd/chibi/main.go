@@ -1,4 +1,4 @@
-// Command recap reads text from stdin and writes an LLM-generated
+// Command chibi reads text from stdin and writes an LLM-generated
 // summary to stdout. The endpoint and model are resolved from flags,
 // environment, or autodiscovered via Ollama. Results are cached on
 // disk; cached variants are picked at random. Use -A to dump every
@@ -14,10 +14,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miku/recap/internal/cache"
-	"github.com/miku/recap/internal/discover"
-	"github.com/miku/recap/internal/llm"
-	"github.com/miku/recap/prompts"
+	"github.com/miku/chibi/internal/cache"
+	"github.com/miku/chibi/internal/discover"
+	"github.com/miku/chibi/internal/llm"
+	"github.com/miku/chibi/prompts"
 )
 
 func main() {
@@ -152,7 +152,7 @@ func main() {
 }
 
 func renderAll(w io.Writer, dir, inputKey string, entries []cache.Entry) {
-	fmt.Fprintf(w, "# recap: %d variant(s) for input `%s`\n\n", len(entries), inputKey[:12])
+	fmt.Fprintf(w, "# chibi: %d variant(s) for input `%s`\n\n", len(entries), inputKey[:12])
 	fmt.Fprintf(w, "_directory: `%s`_\n\n", dir)
 	for i, e := range entries {
 		title := e.Model
@@ -187,16 +187,16 @@ func renderAll(w io.Writer, dir, inputKey string, entries []cache.Entry) {
 }
 
 func die(format string, args ...any) {
-	fmt.Fprintf(os.Stderr, "recap: "+format+"\n", args...)
+	fmt.Fprintf(os.Stderr, "chibi: "+format+"\n", args...)
 	os.Exit(1)
 }
 
 func usage() {
 	out := flag.CommandLine.Output()
-	fmt.Fprintln(out, `recap — summarize text from stdin via an OpenAI-compatible LLM.
+	fmt.Fprintln(out, `chibi — summarize text from stdin via an OpenAI-compatible LLM.
 
 Usage:
-  recap [flags] < input.txt
+  chibi [flags] < input.txt
 
 The endpoint and model are resolved from flags, then environment
 (OPENAI_BASE_URL, OPENAI_API_KEY, OPENAI_MODEL), then Ollama
@@ -208,22 +208,22 @@ Flags:`)
 	fmt.Fprintln(out, `
 Examples:
   # Default summary using the autodiscovered model
-  cat article.md | recap
+  cat article.md | chibi
 
   # Pick a style tailored to the input type
-  recap -s transcript < lecture.vtt
-  recap -s podcast    < interview.txt
-  recap -s paper      < paper.txt
+  chibi -s transcript < lecture.vtt
+  chibi -s podcast    < interview.txt
+  chibi -s paper      < paper.txt
 
   # Show resolved endpoint, model, styles, cache dir (no LLM call)
-  recap -i
+  chibi -i
 
   # Force a fresh variant (LLMs are probabilistic; -f grows the cache)
-  recap -f < input.txt
+  chibi -f < input.txt
 
   # Render every cached variant for an input as one markdown document
-  recap -A < input.txt | glow -
+  chibi -A < input.txt | glow -
 
   # Use a specific model on a remote endpoint
-  recap -e https://api.example.com/v1 -k "$TOKEN" -m gpt-4o < article.txt`)
+  chibi -e https://api.example.com/v1 -k "$TOKEN" -m gpt-4o < article.txt`)
 }

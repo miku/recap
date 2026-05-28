@@ -1,16 +1,16 @@
-# RECAP 1 {{DATE}} {{VERSION}}
+# CHIBI 1 {{DATE}} {{VERSION}}
 
 ## NAME
 
-recap - summarize text from stdin via an OpenAI-compatible LLM
+chibi - summarize text from stdin via an OpenAI-compatible LLM
 
 ## SYNOPSIS
 
-`recap` [*OPTIONS*]
+`chibi` [*OPTIONS*]
 
 ## DESCRIPTION
 
-`recap` reads text from standard input and writes an LLM-generated
+`chibi` reads text from standard input and writes an LLM-generated
 summary to standard output. It targets any OpenAI-compatible chat
 completions endpoint, with optional autodiscovery of a local Ollama
 installation.
@@ -21,7 +21,7 @@ paper variant that weaves short verbatim quotes from the source into
 the summary — and new ones can be added by dropping markdown templates
 into the prompt directory at build time.
 
-Summaries are cached on disk under `$XDG_CACHE_HOME/recap`. Because
+Summaries are cached on disk under `$XDG_CACHE_HOME/chibi`. Because
 LLMs are probabilistic, multiple variants for the same input may
 coexist in the cache; on a hit, one is picked at random. The `-A`
 flag concatenates every cached variant for an input as a single
@@ -75,7 +75,7 @@ be compared with a renderer of choice.
 
 ## FILES
 
-`$XDG_CACHE_HOME/recap/`
+`$XDG_CACHE_HOME/chibi/`
   Cache root. Each input has its own subdirectory whose name is the
   SHA-256 of the input text. Files within are named
   `<modelslug>__<style>__<bodyhash>.md` and contain YAML front
@@ -85,26 +85,26 @@ be compared with a renderer of choice.
 
 Default summary using the autodiscovered model:
 
-    cat article.md | recap
+    cat article.md | chibi
 
 Pick a style tailored to the input type:
 
-    recap -s transcript < lecture.vtt
-    recap -s podcast    < interview.txt
-    recap -s paper      < paper.txt
-    recap -s paperplus  < paper.txt
+    chibi -s transcript < lecture.vtt
+    chibi -s podcast    < interview.txt
+    chibi -s paper      < paper.txt
+    chibi -s paperplus  < paper.txt
 
 Force a fresh variant (the cache grows over repeated runs):
 
-    recap -f < input.txt
+    chibi -f < input.txt
 
 Render every cached variant as one markdown document:
 
-    recap -A < input.txt | glow -
+    chibi -A < input.txt | glow -
 
 Use a specific model on a remote endpoint:
 
-    recap -e https://api.example.com/v1 -k "$TOKEN" -m gpt-4o < article.txt
+    chibi -e https://api.example.com/v1 -k "$TOKEN" -m gpt-4o < article.txt
 
 ## AUTHOR
 
