@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 TARGETS := chibi docs/chibi.1
-VERSION := 0.1.2
+VERSION := 0.2.0
 SEMVER := $(shell echo $(VERSION) | sed 's/^v//')
 
 .PHONY: all
